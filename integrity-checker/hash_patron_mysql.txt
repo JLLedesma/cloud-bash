@@ -1,3 +1,0 @@
-60b725f10c9c85c70d97880dfe8191b3  basefiles/mysqld.cnf
-3b5d5c3712955042212316173ccf37be  basefiles/mysql.cnf
-2cd6ee2c70b0bde53fbe6cac3c8b8bb1  basefiles/mysqldump.cnf
