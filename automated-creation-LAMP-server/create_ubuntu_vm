@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# A script that will create a resource group in Azure
+setup() { 
+    # Install az cli
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    # Login
+    az login --use-device-code
+    echo "You're logged in."
+}
+# Create the resource group
+create_resource_group () {
+    echo "Creating resource group: $RESOURCE_GROUP_NAME in $LOCATION"
+    az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
+}
+# Create the virtual machine
+create_virtual_machine () {
+    #Makes a list with name of created vm in the account
+    vm_list=$(az vm list --query "[].name" --output tsv)
+    #Checks if the name defined by us is already used, in that case the whole operation is aborted 
+    for j in "${vm_list[@]}"
+    do
+        if [[ "$VM_NAME" == "$j" ]]; then
+             export vm_exists=true
+             echo "VM with defined name ALREADY exists"
+             break
+        else
+             export vm_exists=false
+             continue
+         fi
+     done
+    if ! $vm_exists; then
+        az vm create \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --image $VM_IMAGE \
+        --admin-username $ADMIN_USERNAME \
+        --generate-ssh-keys \
+        --public-ip-sku Standard
+    else 
+        echo "Operation ABORTED, VM already exist with name: $VM_NAME"
+    fi
+}
+export IP_ADDRESS=$(az vm show --show-details --resource-group $RESOURCE_GROUP_NAME --name $VM_NAME --query publicIps --output tsv)
+#setup
+create_resource_group
+create_virtual_machine
+echo "$IP_ADDRESS"

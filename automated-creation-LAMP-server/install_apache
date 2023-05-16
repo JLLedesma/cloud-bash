@@ -1,0 +1,26 @@
+#!/bin/bash
+
+##HTTP Server
+setup() { 
+    # Install az cli
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    # Login
+    az login --use-device-code
+    echo "You're logged in."
+}
+#Install extension mysql running commands in VM trough CLI
+#allow HTTP trafficon 80 port with UFW
+inst_apache(){
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "sudo apt update && sudo apt -y install apache2 && yes | sudo ufw enable && ufw allow ssh && ufw reload && sudo ufw allow in \"Apache\" " 
+
+}       
+#setup needs no be uncommented when running the script alone and conneccion with Azure is needed beforehand
+#setup
+inst_apache
+
+
+echo "Apache Installed " 

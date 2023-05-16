@@ -1,0 +1,68 @@
+#!/bin/bash
+
+##DATA BASE
+mysqlRootPassword=123
+setup() { 
+    # Install az cli
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    # Login
+    az login --use-device-code
+    echo "You're logged in."
+}
+
+##Important for me , when using "" you have to put \ before " , otherwise compiler gets it wrong
+##Future Idea, Reduce all the repeated az vm run commands with a funccion where the only thing that varies is the script executed
+
+#Install extension mysql running commands in VM trough CLI
+inst_mysql(){
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "apt update && apt-get -y install mysql-server" 
+    #Setting Mysql secure   
+    # Make sure that NOBODY can access the server without a password
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "sudo mysql -e  \"ALTER USER 'root'@'localhost' IDENTIFIED BY 'abcd'\"" 
+    # Kill the anonymous users
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "mysql -e \"DROP USER ''@'localhost'\"" 
+    # Because our hostname varies we'll use some Bash magic here.
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "mysql -e \"DROP USER ''@'$(hostname)'\"" 
+    # Kill off the demo database
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "mysql -e \"DROP DATABASE IF EXISTS test\"" 
+    # Make our changes take effect
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "mysql -e \"FLUSH PRIVILEGES\"" 
+    # Any subsequent tries to run queries this way will get access denied because lack of usr/pwd param
+     
+}
+
+#setup needs no be uncommented when running the script alone and conneccion with Azure is needed beforehand
+#setup
+inst_mysql
+
+echo "MQSL Installed "
+
+
+
+
+
+

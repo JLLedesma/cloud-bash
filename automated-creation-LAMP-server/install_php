@@ -1,0 +1,25 @@
+#!/bin/bash
+
+##Backend, Bond btwn mysql, apache running the scripts 
+setup() { 
+    # Install az cli
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    # Login
+    az login --use-device-code
+    echo "You're logged in."
+}
+#Installing php with libapache2 to allow interaction with apache , and php-mysql to a allow interaction with mysql
+inst_php(){
+    az vm run-command invoke \
+        --resource-group $RESOURCE_GROUP_NAME \
+        --name $VM_NAME \
+        --command-id RunShellScript \
+        --scripts "sudo apt -y install php libapache2-mod-php php-mysql" 
+
+}       
+#setup needs no be uncommented when running the script alone and conneccion with Azure is needed beforehand
+#setup
+inst_php
+
+
+echo "php Installed "

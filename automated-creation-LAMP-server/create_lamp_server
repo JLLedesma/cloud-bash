@@ -1,0 +1,18 @@
+export RESOURCE_GROUP_NAME=RescGroup1
+export LOCATION=eastus
+export VM_NAME=myVM
+export VM_IMAGE=Ubuntu2204
+export ADMIN_USERNAME=azureuser
+export vm_exists=true
+./create_ubuntu_vm
+#Delay time, waiting the vm is fully deployed
+sleep 30
+
+if ! $vm_exists; then
+    ./install_apache
+    ./install_mysql
+    ./install_php
+    echo "Done, LAMP Server has been deployed"
+else
+    echo "Lamp Server NOT CREATED, VM already exist with name: $VM_NAME"
+fi
