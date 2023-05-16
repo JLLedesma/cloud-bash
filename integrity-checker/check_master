@@ -1,0 +1,5 @@
+#!/bin/bash
+
+##Executes individual checkers (You can comment the not wanted checks or add more)
+./check_mysql testfiles
+#./check_mosquitto testfiles
