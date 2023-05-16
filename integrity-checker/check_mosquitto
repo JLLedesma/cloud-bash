@@ -5,17 +5,17 @@
 
 ##File Integrity Checker
 #Making Patron Files Hash  
-md5sum basefiles/mosquitto.conf > hash_patron_mosquitto.txt ## Mosquito
+md5sum basefiles/mosquitto.conf > hash-files/hash_patron_mosquitto.txt ## Mosquito
 
 
 
 #Making Up Date Files Hash
-md5sum $1/mosquitto.conf > hash_update_mosquitto.txt ## Mosquito
+md5sum $1/mosquitto.conf > hash-files/hash_update_mosquitto.txt ## Mosquito
 
 #Replacing dir in hash_update_mosquitto.txt to be equal to hash_patron_mosquitto.txt, in order to compare just generated codes
-sed -i "s/testfiles/basefiles/g" "hash_update_mosquitto.txt"
+sed -i "s/testfiles/basefiles/g" "hash-files/hash_update_mosquitto.txt"
 
 
 #Comparing hashes
 echo "Mosquitto Check: "
-diff hash_patron_mosquitto.txt hash_update_mosquitto.txt
+diff hash-files/hash_patron_mosquitto.txt hash-files/hash_update_mosquitto.txt

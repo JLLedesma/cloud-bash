@@ -5,16 +5,15 @@
 
 ##File Integrity Checker
 #Making Patron Files Hash  
-md5sum basefiles/mysqld.cnf basefiles/mysql.cnf basefiles/mysqldump.cnf > hash_patron_mysql.txt ## MySQL
+md5sum basefiles/mysqld.cnf basefiles/mysql.cnf basefiles/mysqldump.cnf > hash-files/hash_patron_mysql.txt ## MySQL
 
 #Making Up Date Files Hash
-md5sum $1/mysqld.cnf $1/mysql.cnf $1/mysqldump.cnf > hash_update_mysql.txt ## MySQL
+md5sum $1/mysqld.cnf $1/mysql.cnf $1/mysqldump.cnf > hash-files/hash_update_mysql.txt ## MySQL
 
 #Replacing dir in hash_update_xx.txt to be equal to hash_patron_xx.txt, in order to compare just generated codes
-sed -i "s/testfiles/basefiles/g" "hash_update_mysql.txt"
+sed -i "s/testfiles/basefiles/g" "hash-files/hash_update_mysql.txt"
 
 
 #Comparing hashes
 echo "MySQL Check:"
-diff hash_patron_mysql.txt hash_update_mysql.txt
-
+diff hash-files/hash_patron_mysql.txt hash-files/hash_update_mysql.txt
